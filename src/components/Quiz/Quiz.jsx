@@ -3,7 +3,7 @@ import { useQuizData } from "../../hooks/useQuizData";
 import ProgressBar from "../ProgressBar/ProgressBar";
 import QuestionBlock from "../QuestionBlock/QuestionBlock";
 import LoaderScreen from "../LoaderScreen/LoaderScreen";
-import { PieChart, Pie, Cell, Tooltip } from "recharts";
+import Chart from "../Chart/Chart";
 import css from "./Quiz.module.css";
 
 const Quiz = () => {
@@ -101,26 +101,10 @@ const Quiz = () => {
               Math.round((correctAnswersCount / steps.length) * 100)
             )}
           </p>
-          <div style={{ width: 300, height: 300, margin: "0 auto" }}>
-            <PieChart width={300} height={300}>
-              <Pie
-                data={[
-                  { name: "Correct", value: correctAnswersCount },
-                  {
-                    name: "Incorrect",
-                    value: steps.length - correctAnswersCount,
-                  },
-                ]}
-                dataKey="value"
-                outerRadius={100}
-                label
-              >
-                <Cell fill="#4caf50" />
-                <Cell fill="#f44336" />
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </div>
+          <Chart
+            correctAnswersCount={correctAnswersCount}
+            totalQuestions={steps.length}
+          />
           <button onClick={restartQuiz}>Try again</button>
         </div>
       ) : (
@@ -148,4 +132,5 @@ const Quiz = () => {
     </div>
   );
 };
+
 export default Quiz;
