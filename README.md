@@ -51,7 +51,7 @@ This is a dynamic multi-step quiz application that fetches quiz questions and da
 1. To start the development server, run:
 
    ```bash
-   npm start
+   npm run dev
    ```
 
 2. Open your browser and go to `http://localhost:5173` to view the quiz application.
