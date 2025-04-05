@@ -6,6 +6,7 @@ export const useQuizData = () => {
   const [steps, setSteps] = useState([]);
   const [questionsByStep, setQuestionsByStep] = useState({});
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -27,11 +28,13 @@ export const useQuizData = () => {
         setLoading(false);
       } catch (e) {
         console.error("Error fetching quiz data", e);
+        setError("Failed to load quiz data. Please try again later.");
+        setLoading(false);
       }
     };
 
     fetchQuiz();
   }, []);
 
-  return { steps, questionsByStep, loading };
+  return { steps, questionsByStep, loading, error };
 };

@@ -2,11 +2,12 @@ import { useState } from "react";
 import { useQuizData } from "../../hooks/useQuizData";
 import ProgressBar from "../ProgressBar/ProgressBar";
 import QuestionBlock from "../QuestionBlock/QuestionBlock";
-import css from "./Quiz.module.css";
 import LoaderScreen from "../LoaderScreen/LoaderScreen";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
+import css from "./Quiz.module.css";
 
 const Quiz = () => {
-  const { steps, questionsByStep, loading } = useQuizData();
+  const { steps, questionsByStep, loading, error } = useQuizData();
   const [userAnswers, setUserAnswers] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [quizFinished, setQuizFinished] = useState(false);
@@ -67,12 +68,22 @@ const Quiz = () => {
     setShowValidationMessage(false);
   };
 
+  const getResultAnalysis = (percentage) => {
+    if (percentage >= 80) {
+      return "Well done! You passed successfully!";
+    } else if (percentage >= 50) {
+      return "Nice job, but you might want to review the material again!";
+    } else {
+      return "More practice is needed. Review the material and try again!";
+    }
+  };
+
   if (loading) return <LoaderScreen />;
+  if (error) return <div className={css.error}>{error}</div>;
 
   return (
     <div>
       <h1>Quiz</h1>
-
       {!quizFinished && (
         <ProgressBar currentStep={currentStep} totalSteps={steps.length} />
       )}
@@ -80,8 +91,36 @@ const Quiz = () => {
       {quizFinished && showResultOnly ? (
         <div>
           <h2>
-            Your result: {correctAnswersCount}/{steps.length}
+            Your result: {correctAnswersCount} / {steps.length}
           </h2>
+          <h3>
+            Score: {Math.round((correctAnswersCount / steps.length) * 100)}%
+          </h3>
+          <p>
+            {getResultAnalysis(
+              Math.round((correctAnswersCount / steps.length) * 100)
+            )}
+          </p>
+          <div style={{ width: 300, height: 300, margin: "0 auto" }}>
+            <PieChart width={300} height={300}>
+              <Pie
+                data={[
+                  { name: "Correct", value: correctAnswersCount },
+                  {
+                    name: "Incorrect",
+                    value: steps.length - correctAnswersCount,
+                  },
+                ]}
+                dataKey="value"
+                outerRadius={100}
+                label
+              >
+                <Cell fill="#4caf50" />
+                <Cell fill="#f44336" />
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </div>
           <button onClick={restartQuiz}>Try again</button>
         </div>
       ) : (
@@ -109,5 +148,4 @@ const Quiz = () => {
     </div>
   );
 };
-
 export default Quiz;
